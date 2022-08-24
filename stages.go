@@ -46,9 +46,9 @@ func StageSetupInitPlan(t *testing.T, terraformDir string, terraformOptions *ter
 		}
 
 		// Run the errorFunc if specified, else fail
-		if err != nil && len(errorFunc) == 1 {
+		if err != nil && errorFunc != nil {
 			errorFunc[0](err, stdoutStderr)
-		} else {
+		} else if err != nil {
 			assert.FailNow(t, err.Error())
 		}
 	})
@@ -66,9 +66,9 @@ func StageApply(t *testing.T, terraformDir string, errorFunc ...func(err error, 
 		stdoutStderr, err := terraform.ApplyE(t, terraformOptions)
 
 		// Run the errorFunc if specified, else fail
-		if err != nil && len(errorFunc) == 1 {
+		if err != nil && errorFunc != nil {
 			errorFunc[0](err, stdoutStderr)
-		} else {
+		} else if err != nil {
 			assert.FailNow(t, err.Error())
 		}
 	})
@@ -83,7 +83,7 @@ func StageValidate(t *testing.T, validateFunc ...func()) {
 	}
 
 	// If a validateFunc is specified, run it. If not, do nothing
-	if len(validateFunc) == 1 {
+	if validateFunc != nil {
 		test_structure.RunTestStage(t, "validate", validateFunc[0])
 	}
 }
