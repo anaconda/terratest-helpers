@@ -17,7 +17,7 @@ import (
 // 1. Saving the terraformOptions for later stages
 // 2. Runs `terraform init` and `terraform plan`
 // 3. Verifies that the plan is not running in the remote backend.
-// 4. Executes a user specified function to validate any errors that might have occurred
+// 4. Executes a user specified function to validate any errors that might have occurred.
 func StageSetupInitPlan(t *testing.T, terraformDir string, terraformOptions *terraform.Options, errorFunc ...func(err error, stdoutStderr string)) {
 	// We only allow 1 errorFunc
 	if len(errorFunc) > 1 {
@@ -54,8 +54,7 @@ func StageSetupInitPlan(t *testing.T, terraformDir string, terraformOptions *ter
 	})
 }
 
-// StageApply runs "terraform apply" and validates any errors against the user specified
-// errorFunc
+// StageApply runs "terraform apply" and validates any errors against the user specified errorFunc.
 func StageApply(t *testing.T, terraformDir string, errorFunc ...func(err error, stdoutStderr string)) {
 	// We only allow 1 errorFunc
 	if len(errorFunc) > 1 {

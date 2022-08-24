@@ -18,3 +18,11 @@ If you need to configure a terraform provider for your tests, save that configur
 ## Example
 
 Will follow.
+
+## Development
+
+When cloning this repository, run `make init` locally. This sets up pre-commit, which takes care of the go formatting.
+
+## Versioning
+
+Versioning follows the go standard: Semantic versioning with a `v` prefix. Tags are currently created and pushed manually.

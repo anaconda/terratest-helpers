@@ -1,0 +1,17 @@
+issues:
+  fix: true
+
+linters:
+  enable:
+    - gocyclo
+    - godot
+    - gofumpt
+    - goimports
+    - govet
+    - revive
+    - whitespace
+
+linters-settings:
+  gofumpt:
+    lang-version: "1.18"
+    extra-rules: true

@@ -1,0 +1,28 @@
+name: "[Tools] Pre-Commit"
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+# Cancel a previous job if the same workflow is triggers on the same branch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pre-commit:
+    runs-on: self-hosted-main
+    continue-on-error: true
+    steps:
+    - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # tag=v3
+    - uses: actions/setup-python@c4e89fac7e8767b327bbad6cb4d859eda999cf08 # tag=v4
+    - uses: actions/setup-go@84cbf8094393cdc5fe1fe1671ff2647332956b1a # tag=v3.2.1
+      with:
+        go-version: 1.18.4
+
+    - name: Setup for pre-commit
+      run: make setup
+
+    - uses: pre-commit/action@646c83fcd040023954eafda54b4db0192ce70507 # tag=v3.0.0
