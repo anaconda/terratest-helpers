@@ -1,4 +1,4 @@
-module github.com/anaconda/terratest-helpers
+module github.com/anaconda/terratest-helpers/v2
 
 go 1.19
 
