@@ -1,7 +1,6 @@
 package helpers
 
 import (
-	"os"
 	"path/filepath"
 	"testing"
 
@@ -93,12 +92,8 @@ func StageDestroy(t *testing.T, terraformDir string) {
 	test_structure.RunTestStage(t, "destroy", func() {
 		terraformOptions := test_structure.LoadTerraformOptions(t, terraformDir)
 		terraform.Destroy(t, terraformOptions)
-		test_structure.CleanupTestDataFolder(t, terraformDir)
 
-		// Clean up the test-provider.tf
-		providerPath := filepath.Join(terraformDir, "test-provider.tf")
-		if files.FileExists(providerPath) {
-			os.Remove(providerPath)
-		}
+		// Clean up the test data and test provider
+		Cleanup(t, terraformDir)
 	})
 }
