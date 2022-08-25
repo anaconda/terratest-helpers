@@ -10,14 +10,14 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// StageSetupAndInit is a helper function that sets up the environment to run validation
+// StageSetup is a helper function that sets up the environment to run validation
 // It performs the following steps:
 // 0. Copies provider configuration for the AWS provider
 // 1. Saving the terraformOptions for later stages
 // 2. Runs `terraform init` and `terraform plan`
 // 3. Verifies that the plan is not running in the remote backend.
 // 4. Executes a user specified function to validate any errors that might have occurred.
-func StageSetupInitPlan(t *testing.T, terraformDir string, terraformOptions *terraform.Options, errorFunc ...func(err error, stdoutStderr string)) {
+func StageSetup(t *testing.T, terraformDir string, terraformOptions *terraform.Options, errorFunc ...func(err error, stdoutStderr string)) {
 	// We only allow 1 errorFunc
 	if len(errorFunc) > 1 {
 		assert.FailNow(t, "You must specify exactly zero or one errorFunc's")
