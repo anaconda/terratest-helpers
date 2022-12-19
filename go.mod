@@ -2,7 +2,7 @@ module github.com/anaconda/terratest-helpers/v2
 
 go 1.19
 
-require github.com/gruntwork-io/terratest v0.40.20
+require github.com/gruntwork-io/terratest v0.41.7
 
 require (
 	cloud.google.com/go v0.83.0 // indirect
