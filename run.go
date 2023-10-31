@@ -6,7 +6,7 @@ import (
 	"github.com/gruntwork-io/terratest/modules/terraform"
 )
 
-func RunValidate(t *testing.T, terraformOptions terraform.Options, validateFunc func()) {
+func RunValidate(t *testing.T, _ terraform.Options, validateFunc func()) {
 	RunOptionsValidate(t, &terraform.Options{}, validateFunc)
 }
 
