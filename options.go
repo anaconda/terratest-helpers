@@ -8,6 +8,7 @@ import (
 
 	"github.com/gruntwork-io/terratest/modules/files"
 	"github.com/gruntwork-io/terratest/modules/terraform"
+	test_structure "github.com/gruntwork-io/terratest/modules/test-structure"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -27,6 +28,10 @@ func DefaultOptions(t *testing.T, terraformOptions *terraform.Options) *terrafor
 		}
 		terraformOptions.TerraformDir = filepath.Join(path, "../")
 	}
+
+	// This enables parallel testing by ensuring that every TerraformDir lives in its own temporary path
+	tempTestFolder := test_structure.CopyTerraformFolderToTemp(t, terraformOptions.TerraformDir, ".")
+	terraformOptions.TerraformDir = tempTestFolder
 
 	return terraform.WithDefaultRetryableErrors(t, terraformOptions)
 }
