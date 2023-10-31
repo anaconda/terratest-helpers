@@ -43,6 +43,8 @@ You can use the `DefaultOptions` function for default terraformOptions to be set
 - `TerraformDir`, set to the absolute path of the module as the tests are in a subdirectory named `tests`
 - `VarFiles` is appended the with the `.tfvars` file in `test/variables` that has the same as the running test
 
+Using `DefaultOptions` ensures that the module directory is copied so that tests can be run in parallel with `t.Parallel()`
+
 ### Stages
 
 :information_source: You need stages if you expect e.g. the `terraform plan` to fail for a test and want to validate the errors that occur, see the examples below.
@@ -64,6 +66,10 @@ Available stages are:
 
 ```go
 func TestDefaults(t *testing.T) {
+  // If the test needs to run on its own, e.g. because
+  // of quota limitations, remove this line
+  t.Parallel()
+
 	helpers.RunNoValidate(t)
 }
 ```
@@ -76,6 +82,10 @@ When you need to define not only constant variables, but also dynamic ones, you 
 
 ```go
 func TestWithVars(t *testing.T) {
+  // If the test needs to run on its own, e.g. because
+  // of quota limitations, remove this line
+  t.Parallel()
+
 	helpers.RunOptionsNoValidate(t, &terraform.Options{
 		Vars: map[string]interface{}{
 			"name": uuid.New(),
@@ -92,18 +102,18 @@ If a test is expected to fail on apply, defer the `destroy` stage and pass an er
 
 ```go
 func TestS3BucketDefault(t *testing.T) {
-	defer helpers.StageDestroy(t, TerraformDir)
+	t.Parallel()
+	terraformOptions := defaultOptions(t)
 
 	// set everything up for the terraform apply later
-	terraformOptions := terraform.WithDefaultRetryableErrors(t, &terraform.Options{
-		TerraformDir: TerraformDir,
-		Vars: map[string]interface{}{
-			"name":        uuid.New(),
-		},
-	})
+	terraformOptions.Vars = map[string]interface{}{
+		"name": uuid.New(),
+	}
 
-	helpers.StageSetup(t, TerraformDir, terraformOptions)
-	helpers.StageApply(t, TerraformDir, func(err error, stdoutStderr string) {
+	defer helpers.StageDestroy(t, terraformOptions.TerraformDir)
+
+	helpers.StageSetup(t, terraformOptions.TerraformDir, terraformOptions)
+	helpers.StageApply(t, terraformOptions.TerraformDir, func(err error, stdoutStderr string) {
 		// This error is expected
 		if err != nil {
 			if !strings.Contains(stdoutStderr, "Error: Some expected error") {
@@ -120,21 +130,20 @@ For a test that is expected to fail on plan, use the `Cleanup` function.
 
 ```go
 func TestS3BucketBackupOnVersioningOff(t *testing.T) {
-	defer helpers.Cleanup(t, TerraformDir)
+	t.Parallel()
+	terraformOptions := defaultOptions(t)
 
-	terraformOptions := terraform.WithDefaultRetryableErrors(t, &terraform.Options{
-		TerraformDir: TerraformDir,
-		// NoColor is important for the string.Contains later
-		NoColor: true,
-		Vars: map[string]interface{}{
-			"name":        uuid.New(),
-			"backup":      "on",
-			"versioning":  "Disabled",
-		},
-	})
+	terraformOptions.NoColor = true
+	terraformOptions.Vars = map[string]interface{}{
+		"name":       uuid.New(),
+		"backup":     "on",
+		"versioning": "Disabled",
+	}
+
+	defer helpers.Cleanup(t, terraformOptions.TerraformDir)
 
 	// The terraform plan is expected to fail as versioning can't be turned off with backups turned on.
-	helpers.StageSetup(t, TerraformDir, terraformOptions, func(err error, stdoutStderr string) {
+	helpers.StageSetup(t, terraformOptions.TerraformDir, terraformOptions, func(err error, stdoutStderr string) {
 		// This error is expected, the precondition failed
 		if err != nil {
 			if !strings.Contains(stdoutStderr, "Error: Resource precondition failed") || !strings.Contains(stdoutStderr, "Versioning cannot be disabled when backups are enabled") {
