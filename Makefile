@@ -6,7 +6,7 @@ install:
 # Directly called by the CI
 .PHONY: setup
 setup:
-	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+	go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.0.2
 
 # Called by users for local setup
 .PHONY: init
