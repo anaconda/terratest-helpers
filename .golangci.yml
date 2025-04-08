@@ -1,17 +1,33 @@
-issues:
-  fix: true
-
+version: "2"
 linters:
   enable:
     - gocyclo
     - godot
-    - gofumpt
-    - goimports
-    - govet
     - revive
     - whitespace
-
-linters-settings:
-  gofumpt:
-    lang-version: "1.18"
-    extra-rules: true
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
+issues:
+  fix: true
+formatters:
+  enable:
+    - gofumpt
+    - goimports
+  settings:
+    gofumpt:
+      extra-rules: true
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
