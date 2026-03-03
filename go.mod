@@ -1,10 +1,10 @@
 module github.com/anaconda/terratest-helpers/v2
 
-go 1.25.0
+go 1.26
 
 toolchain go1.26.0
 
-require github.com/gruntwork-io/terratest v0.55.0
+require github.com/gruntwork-io/terratest v0.56.0
 
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect
