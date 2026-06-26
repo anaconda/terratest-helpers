@@ -1,6 +1,7 @@
 package helpers
 
 import (
+	"context"
 	"path/filepath"
 	"testing"
 
@@ -35,7 +36,7 @@ func StageSetup(t *testing.T, terraformDir string, terraformOptions *terraform.O
 	test_structure.RunTestStage(t, "setup", func() {
 		test_structure.SaveTerraformOptions(t, terraformDir, terraformOptions)
 
-		stdoutStderr, err := terraform.InitAndPlanE(t, terraformOptions)
+		stdoutStderr, err := terraform.InitAndPlanContextE(t, context.Background(), terraformOptions)
 
 		// Verify we're running locally to not interfere with non-testing infrastructure
 		exit := assert.NotContains(t, stdoutStderr, "backend \"remote\"", "Running plan in the remote backend", "Plan is running in remote backend")
@@ -62,7 +63,7 @@ func StageApply(t *testing.T, terraformDir string, errorFunc ...func(err error, 
 
 	test_structure.RunTestStage(t, "apply", func() {
 		terraformOptions := test_structure.LoadTerraformOptions(t, terraformDir)
-		stdoutStderr, err := terraform.ApplyE(t, terraformOptions)
+		stdoutStderr, err := terraform.ApplyContextE(t, context.Background(), terraformOptions)
 
 		// Run the errorFunc if specified, else fail
 		if err != nil && errorFunc != nil {
@@ -91,7 +92,7 @@ func StageValidate(t *testing.T, validateFunc ...func()) {
 func StageDestroy(t *testing.T, terraformDir string) {
 	test_structure.RunTestStage(t, "destroy", func() {
 		terraformOptions := test_structure.LoadTerraformOptions(t, terraformDir)
-		terraform.Destroy(t, terraformOptions)
+		terraform.DestroyContext(t, context.Background(), terraformOptions)
 
 		// Clean up the test data and test provider
 		Cleanup(t, terraformDir)
