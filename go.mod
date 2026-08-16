@@ -2,7 +2,7 @@ module github.com/anaconda/terratest-helpers/v2
 
 go 1.26.0
 
-toolchain go1.26.5
+toolchain go1.26.6
 
 require github.com/gruntwork-io/terratest v1.0.1
 
